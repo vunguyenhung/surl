@@ -1,10 +1,9 @@
-import React, { Component, PureComponent, Fragment } from 'react';
+import React, { Component } from 'react';
 import jwtDecode from 'jwt-decode';
-import PropTypes from 'prop-types';
 
-import './App.css';
-import URLInput from './URLInput';
-import { API_URL } from './configs';
+import { API_URL } from '../configs';
+import URLInput from './URL-input';
+import URLList from './URL-list';
 
 function createShortenedURL({ url, userId, token }) {
   return fetch(`${API_URL}/users/${userId}/urls`, {
@@ -33,14 +32,6 @@ function register() {
     .then(response => response.json());
 }
 
-const URLList = ({ urls }) => (
-  urls.map(url => <div key={url.id}>{JSON.stringify(url)}</div>)
-);
-URLList.propTypes = {
-  urls: PropTypes.arrayOf(PropTypes.object).isRequired,
-};
-
-
 class App extends Component {
   constructor() {
     super();
@@ -52,34 +43,23 @@ class App extends Component {
     };
   }
 
-  componentDidMount() {
-    const savedToken = localStorage.getItem('token');
-    if (!savedToken) {
-      register().then(({ token }) => {
-        localStorage.setItem('token', token);
-        const { userId } = jwtDecode(token);
-        this.setState({ userId, token });
-      })
-        .then(async () => {
-          const { userId, token } = this.state;
-          const [urls, top10URLs] = await Promise.all([
-            getUserURLs({ userId, token }),
-            getTop10URLs(),
-          ]);
-          this.setState({ urls, top10URLs });
-        });
-    } else {
-      const { userId } = jwtDecode(savedToken);
-      this.setState({ userId, token: savedToken });
-      getUserURLs({ userId, token: savedToken })
-        .then((urls) => {
-          this.setState({ urls });
-        })
-        .then(async () => {
-          const top10URLs = await getTop10URLs();
-          this.setState({ top10URLs });
-        });
+  async componentDidMount() {
+    let token = localStorage.getItem('token');
+    if (!token) {
+      const { token: newToken } = await register();
+      localStorage.setItem('token', token);
+      token = newToken;
     }
+
+    const { userId } = jwtDecode(token);
+    const [urls, top10URLs] = await Promise.all([
+      getUserURLs({ userId, token }),
+      getTop10URLs(),
+    ]);
+
+    this.setState({
+      userId, token, urls, top10URLs,
+    });
   }
 
   onShortenURL = async (url) => {
@@ -97,7 +77,7 @@ class App extends Component {
     const { createdKey, urls, top10URLs } = this.state;
 
     return (
-      <div className="App">
+      <div>
         <h1>sURL - Shorten your URL</h1>
         <URLInput shortenURL={this.onShortenURL} createdKey={createdKey} />
 

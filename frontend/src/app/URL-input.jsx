@@ -1,6 +1,6 @@
 import React, { Fragment, PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { API_URL } from './configs';
+import { API_URL } from '../configs';
 
 class URLInput extends PureComponent {
   static propTypes = {
