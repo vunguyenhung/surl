@@ -10,7 +10,9 @@
   "author": "vunguyenhung",
   "dependencies": {
     "@koa/cors": "^2.2.2",
+    "agenda": "^2.0.2",
     "base-62.js": "^0.9.9",
+    "dayjs": "^1.7.7",
     "debug": "^3.1.0",
     "jsonwebtoken": "^8.3.0",
     "koa": "^2.5.3",

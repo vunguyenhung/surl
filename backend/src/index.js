@@ -1,15 +1,17 @@
 const debug = require('debug');
 
-const { connect: connectDB } = require('./db');
-const { startServer: startHTTPServer } = require('./http');
+const DB = require('./db');
+const HTTP = require('./http');
+const Jobs = require('./services/jobs');
 
 debug.enable('sURL:*');
 const log = debug('sURL:index');
 
 function main() {
   return Promise.all([
-    connectDB(),
-    startHTTPServer(),
+    DB.connect(),
+    HTTP.startServer(),
+    Jobs.start(),
   ]);
 }
 

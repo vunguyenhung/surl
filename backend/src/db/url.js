@@ -20,12 +20,13 @@ function findOne(query) {
 }
 
 function increaseVisitCount(key) {
-  return URLModel.updateOne({ key }, { $inc: { visitCount: 1 } });
+  return URLModel.updateOne({ key }, { $inc: { visitCount: 1 }, lastVisited: Date.now() });
 }
 
 module.exports = {
   create,
   find,
   findOne,
+  deleteMany: URLModel.deleteMany.bind(URLModel),
   increaseVisitCount,
 };
