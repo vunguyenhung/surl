@@ -1,8 +1,5 @@
 import { API_HTTP_URL } from './configs';
-
-function generateShortenedURLFromKey(key) {
-  return `${API_HTTP_URL}/${key}`;
-}
+import { generateShortenedURLFromKey } from './utils';
 
 export async function createShortenedURL({ url, userId, token }) {
   const { key } = await fetch(`${API_HTTP_URL}/users/${userId}/urls`, {
