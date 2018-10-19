@@ -1,45 +1,24 @@
 import React, { Component } from 'react';
 import jwtDecode from 'jwt-decode';
+import Typoraphy from '@material-ui/core/Typography';
+import Snackbar from '@material-ui/core/Snackbar';
+import connectNewURLStream from '../ws';
 
-import { API_URL } from '../configs';
+import {
+  register, getUserURLs, getTop10URLs, createShortenedURL,
+} from '../http';
 import URLInput from './URL-input';
 import URLList from './URL-list';
 
-function createShortenedURL({ url, userId, token }) {
-  return fetch(`${API_URL}/users/${userId}/urls`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ url }),
-  }).then(response => response.json());
-}
-
-function getUserURLs({ userId, token }) {
-  return fetch(`${API_URL}/users/${userId}/urls`, {
-    headers: { Authorization: `Bearer ${token}` },
-  }).then(response => response.json());
-}
-
-function getTop10URLs() {
-  return fetch(`${API_URL}/urls?sort=visitCount.desc&limit=10`)
-    .then(response => response.json());
-}
-
-function register() {
-  return fetch(`${API_URL}/users`, { method: 'POST' })
-    .then(response => response.json());
-}
-
 class App extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.state = {
-      createdKey: '',
       urls: [],
       top10URLs: [],
+      snackBarOpen: false,
+      snackBarText: '',
     };
   }
 
@@ -50,44 +29,66 @@ class App extends Component {
       localStorage.setItem('token', token);
       token = newToken;
     }
-
     const { userId } = jwtDecode(token);
     const [urls, top10URLs] = await Promise.all([
       getUserURLs({ userId, token }),
       getTop10URLs(),
     ]);
-
     this.setState({
       userId, token, urls, top10URLs,
     });
+
+    connectNewURLStream()
+      .subscribe((newShortenedURL) => {
+        this.setState({ snackBarOpen: true, snackBarText: newShortenedURL });
+      });
   }
 
   onShortenURL = async (url) => {
     const { userId, token } = this.state;
     if (!userId || !token) return;
-    const { key } = await createShortenedURL({ url, userId, token });
+    await createShortenedURL({ url, userId, token });
     const [urls, top10URLs] = await Promise.all([
       getUserURLs({ userId, token }),
       getTop10URLs(),
     ]);
-    this.setState({ createdKey: key, urls, top10URLs });
+    this.setState({ urls, top10URLs });
+  };
+
+  handleSnackBarClose = () => {
+    this.setState({ snackBarOpen: false });
   };
 
   render() {
-    const { createdKey, urls, top10URLs } = this.state;
+    const {
+      urls, top10URLs, snackBarOpen, snackBarText,
+    } = this.state;
 
     return (
       <div>
-        <h1>sURL - Shorten your URL</h1>
-        <URLInput shortenURL={this.onShortenURL} createdKey={createdKey} />
-
-        <h2>Your shortened URLs</h2>
+        <Typoraphy variant="h1" align="center" gutterBottom>sURL - Shorten your URL</Typoraphy>
+        <URLInput shortenURL={this.onShortenURL} />
         <URLList urls={urls} />
 
-        <h2>Top 10 visited URLs</h2>
-        <URLList urls={top10URLs} />
+        <Typoraphy variant="h2" align="center" gutterBottom>Top 10 shortened URLs</Typoraphy>
+        {
+          top10URLs && top10URLs.length > 0
+            ? <URLList urls={top10URLs} />
+            : <Typoraphy variant="h3" align="center" gutterBottom>...</Typoraphy>
+        }
 
-        {/* TODO: add notification about new shorted url here */}
+        <Snackbar
+          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          open={snackBarOpen}
+          onClose={this.handleSnackBarClose}
+          autoHideDuration={6000}
+          message={(
+            <div>
+              <h3>New URL Shortened!</h3>
+              <span>{snackBarText}</span>
+            </div>
+          )}
+        />
       </div>
     );
   }

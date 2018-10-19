@@ -12,7 +12,7 @@ function create({ user, url }) {
 }
 
 function find(query, projection) {
-  return URLModel.find(query, 'key url id visitCount', projection);
+  return URLModel.find(query, 'key url id visitCount', projection).sort({ createdAt: -1 });
 }
 
 function findOne(query) {

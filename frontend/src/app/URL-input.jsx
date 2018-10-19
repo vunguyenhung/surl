@@ -1,15 +1,26 @@
-import React, { Fragment, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { API_URL } from '../configs';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import { withStyles } from '@material-ui/core/styles';
+
+const styles = theme => ({
+  container: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    marginBottom: theme.spacing.unit * 2,
+  },
+  textField: {
+    width: 500,
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
+  },
+});
 
 class URLInput extends PureComponent {
   static propTypes = {
     shortenURL: PropTypes.func.isRequired,
-    createdKey: PropTypes.string,
-  };
-
-  static defaultProps = {
-    createdKey: '',
   };
 
   handleInputChange = (event) => {
@@ -25,17 +36,36 @@ class URLInput extends PureComponent {
     shortenURL(url);
   };
 
+  handleKeyDown = (event) => {
+    if (event.keyCode === 13) {
+      this.handleShortenURL();
+    }
+  };
+
   render() {
-    const { createdKey } = this.props;
+    const { classes } = this.props;
 
     return (
-      <Fragment>
-        <input placeholder="Paste a link" onChange={this.handleInputChange} />
-        <button type="button" onClick={this.handleShortenURL}>shorten</button>
-        {createdKey && <div>{`${API_URL}/${createdKey}`}</div>}
-      </Fragment>
+      <div className={classes.container}>
+        <TextField
+          variant="outlined"
+          placeholder="Paste a link"
+          className={classes.textField}
+          onChange={this.handleInputChange}
+          onKeyDown={this.handleKeyDown}
+        />
+        <Button
+          type="button"
+          size="large"
+          color="primary"
+          variant="outlined"
+          onClick={this.handleShortenURL}
+        >
+          shorten
+        </Button>
+      </div>
     );
   }
 }
 
-export default URLInput;
+export default withStyles(styles)(URLInput);

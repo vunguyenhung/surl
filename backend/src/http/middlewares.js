@@ -1,4 +1,5 @@
 const validator = require('validator');
+const log = require('debug')('sURL:http');
 
 const User = require('../db/user');
 const { verifyToken } = require('../services/crypto');
@@ -29,6 +30,7 @@ function errorHandler() {
       await next();
     } catch (err) {
       ctx.status = err.statusCode || err.status || 500;
+      log('Error occurred', err);
       ctx.body = { message: err.message };
       ctx.app.emit('error', err, ctx);
     }
