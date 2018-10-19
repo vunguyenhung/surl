@@ -21,6 +21,7 @@
     "koa-router": "^7.4.0",
     "mongoose": "^5.3.4",
     "ramda": "^0.25.0",
+    "socket.io": "^2.1.1",
     "validator": "^10.8.0"
   },
   "devDependencies": {

@@ -4,6 +4,7 @@ const User = require('../db/user');
 const URL = require('../db/url');
 const { createToken } = require('../services/crypto');
 const { auth, validateURL } = require('./middlewares');
+const WS = require('../ws');
 
 function routes() {
   const router = new Router();
@@ -34,6 +35,8 @@ function routes() {
       const { url } = ctx.request.body;
       const { key } = await URL.create({ url, user: userId });
       ctx.body = { key };
+
+      WS.broadcastNewURL({ key });
     });
 
   router.get('/urls', async (ctx) => {

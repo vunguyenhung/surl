@@ -2,6 +2,7 @@ const debug = require('debug');
 
 const DB = require('./db');
 const HTTP = require('./http');
+const WS = require('./ws');
 const Jobs = require('./services/jobs');
 
 debug.enable('sURL:*');
@@ -10,8 +11,9 @@ const log = debug('sURL:index');
 function main() {
   return Promise.all([
     DB.connect(),
-    HTTP.startServer(),
     Jobs.start(),
+    HTTP.startServer(),
+    WS.startServer(),
   ]);
 }
 
