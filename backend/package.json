@@ -1,0 +1,30 @@
+{
+  "name": "surl-backend",
+  "version": "0.0.0",
+  "description": "",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon ./src",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "vunguyenhung",
+  "dependencies": {
+    "@koa/cors": "^2.2.2",
+    "base-62.js": "^0.9.9",
+    "debug": "^3.1.0",
+    "jsonwebtoken": "^8.3.0",
+    "koa": "^2.5.3",
+    "koa-bodyparser": "^4.2.1",
+    "koa-morgan": "^1.0.1",
+    "koa-router": "^7.4.0",
+    "mongoose": "^5.3.4",
+    "ramda": "^0.25.0",
+    "validator": "^10.8.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.7.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "nodemon": "^1.18.4"
+  }
+}

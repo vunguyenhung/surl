@@ -1,0 +1,9 @@
+# Temp dir
+temp
+*/temp
+
+# IDE
+.idea
+
+# NPM
+*/node_modules
