@@ -26,9 +26,10 @@ class App extends Component {
     let token = localStorage.getItem('token');
     if (!token) {
       const { token: newToken } = await register();
-      localStorage.setItem('token', token);
+      localStorage.setItem('token', newToken);
       token = newToken;
     }
+
     const { userId } = jwtDecode(token);
     const [urls, top10URLs] = await Promise.all([
       getUserURLs({ userId, token }),
