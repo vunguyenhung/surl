@@ -8,9 +8,9 @@ A minimal URL Shortener.
 - Docker@18.06.1
 
 ### Instructions
-1. Build Docker images and run container 
-```bash
-docker-compose up -d --build
-```
+1. Build Docker images and run containers
+    ```bash
+    docker-compose up -d --build
+    ```
 
 2. Access the application at: `localhost:8080`
